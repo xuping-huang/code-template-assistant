@@ -12,6 +12,20 @@ export enum ConstantDefine {
     TEMPLATE_CONFIG_KEY = "template.config.name"
 }
 
+export enum MessageFromUI {
+    SEARCH_TEMPLATE = "fromUI.search",
+    CODE_GEN_UNTITLED = "fromUI.codegen.untitled"
+}
+
+export enum MessageFromExtension {
+    SEARCH_RESULT = "fromExt.search.result"
+}
+
+export enum WebviewPanelDefine {
+    SEARCH_TEMPLATE_ID = "codeAssistantTemplateSearch",
+    SEARCH_TEMPLATE_TITLE = "Code Assistant-Template Search"
+}
+
 export interface TemplateVariable {
     properties: object;
     functions: object;
