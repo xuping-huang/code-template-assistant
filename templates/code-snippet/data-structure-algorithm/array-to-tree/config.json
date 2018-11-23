@@ -1,0 +1,56 @@
+{
+    "name": "Parent/Child List Array to Tree Array",
+    "note": "Convert an data collection in which data have parent/child relation to a tree structure array (relation group by children[] property).",
+    "input": "Array of data collection with parent/child relation",
+    "output": "Array of data tree with children[]",
+    "author": "huangxuping",
+    "version": "0.0.1",
+    "tags": ["Tree", "Parent", "Children"],
+    "source": "JavaScript",
+    "supports": ["JavaScript", "Java", "C#"],
+    "namerule": "Camel",
+    "infos": {
+        "properties": {
+            "treeIdPropName": {
+                "default": "knowledge_tree_id",
+                "note": "树节点记录的主键属性名称"
+            },
+            "treeParentPropName": {
+                "default": "parent_id",
+                "note": "指向父节点id的属性名称"
+            },
+            "treeNameProp": {
+                "default": "name",
+                "note": "树节点的名称属性"
+            },
+            "chlidrenProp": {
+                "default": "children",
+                "note": "树节点的子集属性"
+            }
+        },
+        "functions": {
+            "facadeMethod": {
+                "default": "getChildrenTreeList",
+                "note": "与外部交互的接口方法"
+            },
+            "getTreeIdMap": {
+                "default": "getTreeIdMap",
+                "note": "建立Key为节点主键,Value为节点对象的Map"
+            },
+            "getChildrenMap": {
+                "default": "getChildrenMap",
+                "note": "建立Key为父节点ID，Value为直接子节点数组的Map"
+            },
+            "createDirNode": {
+                "default": "createDirNode",
+                "note": "创建根节点数组，子节点放在children属性中；这是一个递归调用函数"
+            }
+        },
+        "context": {
+            "caller": {
+                "default": "this.",
+                "note": "上下文环境的引用名称"
+            }
+        }
+    }
+}

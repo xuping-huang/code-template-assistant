@@ -3,6 +3,7 @@
     "displayName": "Code Template Assistant",
     "description": "An extension of vscode which find the right template from the template Library and generate code by language environment.",
     "version": "0.0.1",
+    "publisher": "huangxuping",
     "engines": {
         "vscode": "^1.25.0"
     },
@@ -10,16 +11,37 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.sayHello"
+        "onCommand:codeAssistant.templateRepositroyReload",
+        "onCommand:codeAssistant.templateRepositroySearch"
     ],
     "main": "./out/extension",
     "contributes": {
         "commands": [
             {
-                "command": "extension.sayHello",
-                "title": "Hello World"
+                "command": "codeAssistant.templateRepositroyReload",
+                "title": "Code Assistant: Reload Template Repository"
+            },
+            {
+                "command": "codeAssistant.templateRepositroySearch",
+                "title": "Code Assistant: Search Template Repository"
             }
-        ]
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "Code Assistant Configuration",
+            "properties": {
+                "code-assistant.template.path": {
+                    "type": "string",
+                    "default": "templates",
+                    "description": "The directory of code assistant template repository."
+                },
+                "code-assistant.template.config.name":{
+                    "type": "string",
+                    "default": "config.json",
+                    "description": "The configuration of a template suite."
+                }
+            }
+        }
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
