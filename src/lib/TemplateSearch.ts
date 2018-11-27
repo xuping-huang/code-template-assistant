@@ -1,10 +1,10 @@
 'use strict'
 
-import * as path from 'path'
 import * as vscode from 'vscode'
-import * as Mustache from 'mustache'
-import * as fs from 'fs'
-import {TemplateConfig, ConstantDefine, MessageFromUI, MessageFromExtension, WebviewPanelDefine, SearchCondition} from './common'
+import {TemplateGenerateCode} from './TemplateGenerateCode'
+import {TemplateConfig, ConstantDefine, MessageFromUI, 
+        MessageFromExtension, WebviewPanelDefine, SearchCondition,
+        ResourceURI, RresourcePath } from './common'
 
 
 export class TemplateSearch{
@@ -62,8 +62,9 @@ export class TemplateSearch{
                 case MessageFromUI.SEARCH_TEMPLATE:
                     this._search(message.condition)                    
                     return
-                case MessageFromUI.CODE_GEN_UNTITLED:
-                    // TODO: TemplateGenerateCode.createOrShow(this._context, message.template)
+                case MessageFromUI.TEMPLATE_VAIRABLE_SETTING:
+                    const name = message.templateName
+                    TemplateGenerateCode.createOrShow(this._extensionPath, this._storageMemento, name)
                     return
             }
         }, null, this._disposables)
@@ -103,65 +104,13 @@ export class TemplateSearch{
     }
 
     private _update() {
-        let configs : Array<object> = this._storageMemento.get(ConstantDefine.MEMENTO_STORE_KEY) || []
+        let configs : Array<TemplateConfig> = this._storageMemento.get(ConstantDefine.MEMENTO_STORE_KEY) || []
         let hasTemplateLoaded = true
         if ( configs.length == 0 ){
             hasTemplateLoaded = false
         }
         this._panel.webview.html = hasTemplateLoaded 
-                                 ? SearchWebviewPanel.getContent(this._extensionPath) 
-                                 : SearchWebviewPanel.getNoTemplateContent(this._extensionPath)
-    }
-}
-
-class SearchWebviewPanel {
-    private static getUIParamMap(extensionPath:string){
-        const bootstrapCss = vscode.Uri.file(path.join(extensionPath, 'media', 'bootstrap.css')).with({ scheme: 'vscode-resource' });
-        const styleCss = vscode.Uri.file(path.join(extensionPath, 'media', 'codeAssistant.css')).with({ scheme: 'vscode-resource' });
-        const jqueryUri = vscode.Uri.file(path.join(extensionPath, 'media', 'jquery.js')).with({ scheme: 'vscode-resource' });
-        const searchUri = vscode.Uri.file(path.join(extensionPath, 'media', 'search.js')).with({ scheme: 'vscode-resource' });
-
-        return {
-            bootstrapCss,
-            styleCss,
-            jqueryUri,
-            searchUri
-        }
-    }
-
-    private static notFoundContent(){
-        return `<!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Not Found</title>                
-            </head>
-            <body>
-                <h2 class="code-template-title">Page Not Found</h2>
-            </body>
-            </html>`        
-    }
-
-    public static getContent(extensionPath:string){        
-        const uiPath = path.resolve(extensionPath, 'media/ui/search.html')
-        if ( !fs.existsSync(uiPath) ){
-            console.log("ui page path invalid:"+uiPath)
-            return this.notFoundContent()
-        }
-        const params = this.getUIParamMap(extensionPath)
-        let bf = fs.readFileSync(uiPath)
-        return Mustache.render( bf.toString('utf8'), params )
-    }
-
-    public static getNoTemplateContent(extensionPath:string){
-        const uiPath = path.resolve(extensionPath, 'media/ui/noTemplate.html')
-        if ( !fs.existsSync(uiPath) ){
-            console.log("ui page path invalid:"+uiPath)
-            return this.notFoundContent()
-        }
-        const params = this.getUIParamMap(extensionPath)
-        let bf = fs.readFileSync(uiPath)
-        return Mustache.render( bf.toString('utf8'), params )        
+                                 ? ResourceURI.getHtmlContent(this._extensionPath, RresourcePath.SEARCH_PAGE_PATH) 
+                                 : ResourceURI.getHtmlContent(this._extensionPath, RresourcePath.NO_TEMPLATE_PAGE_PATH)
     }
 }

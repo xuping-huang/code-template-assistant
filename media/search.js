@@ -44,8 +44,8 @@
             link.on('click', function(event){
                 var ele = event.target
                 vscode.postMessage({
-                    command: 'codegen',
-                    template: ele.innerText
+                    command: 'fromUI.codegen.variable.setting',
+                    templateName: ele.innerText
                 });
             })            
             debugger
