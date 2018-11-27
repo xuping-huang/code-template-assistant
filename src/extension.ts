@@ -3,7 +3,7 @@
 import * as vscode from 'vscode'
 import { TemplateLoader } from './lib/TemplateLoader'
 import { TemplateSearch } from './lib/TemplateSearch'
-import {ConstantDefine} from '../src/lib/common'
+import {ConstantDefine} from './lib/common'
 
 export function activate(context: vscode.ExtensionContext) {
 

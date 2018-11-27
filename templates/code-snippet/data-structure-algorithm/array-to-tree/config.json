@@ -5,7 +5,7 @@
     "output": "Array of data tree with children[]",
     "author": "huangxuping",
     "version": "0.0.1",
-    "tags": ["Tree", "Parent", "Children"],
+    "tags": ["tree", "parent", "children"],
     "source": "JavaScript",
     "supports": ["JavaScript", "Java", "C#"],
     "namerule": "Camel",

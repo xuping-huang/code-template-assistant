@@ -2,7 +2,10 @@
 
 import * as path from 'path'
 import * as vscode from 'vscode'
-import {TemplateConfig, ConstantDefine, MessageFromUI, MessageFromExtension, WebviewPanelDefine} from './common'
+import * as Mustache from 'mustache'
+import * as fs from 'fs'
+import {TemplateConfig, ConstantDefine, MessageFromUI, MessageFromExtension, WebviewPanelDefine, SearchCondition} from './common'
+
 
 export class TemplateSearch{
 
@@ -57,7 +60,7 @@ export class TemplateSearch{
         this._panel.webview.onDidReceiveMessage(message => {
             switch (message.command) {
                 case MessageFromUI.SEARCH_TEMPLATE:
-                    this._search(message.text)                    
+                    this._search(message.condition)                    
                     return
                 case MessageFromUI.CODE_GEN_UNTITLED:
                     // TODO: TemplateGenerateCode.createOrShow(this._context, message.template)
@@ -80,13 +83,22 @@ export class TemplateSearch{
         }
     }
 
-    private _search(keywords:String){
+    private _search(condition:SearchCondition){
         // TODO: 补充从模板配置缓存中找到合适模板的算法
+        let c = condition
 
         // 返回与关键字匹配的模板集
+        const tplConfigs:Array<TemplateConfig> = this._storageMemento.get(ConstantDefine.MEMENTO_STORE_KEY) || []
+        let result:any = []
+        tplConfigs.forEach( tplConfig =>{
+            result.push({
+                name: tplConfig.name,
+                note: tplConfig.note
+            })
+        })
         this._panel.webview.postMessage({
             command: MessageFromExtension.SEARCH_RESULT,
-            configs: this._storageMemento.get(ConstantDefine.MEMENTO_STORE_KEY) || []
+            configs: result
          })
     }
 
@@ -96,49 +108,60 @@ export class TemplateSearch{
         if ( configs.length == 0 ){
             hasTemplateLoaded = false
         }
-        this._panel.webview.html = hasTemplateLoaded? SearchWebviewPanel.getContent(this._extensionPath) : SearchWebviewPanel.getNoTemplateContent()
+        this._panel.webview.html = hasTemplateLoaded 
+                                 ? SearchWebviewPanel.getContent(this._extensionPath) 
+                                 : SearchWebviewPanel.getNoTemplateContent(this._extensionPath)
     }
 }
 
 class SearchWebviewPanel {
-    public static getContent(extensionPath:string){
+    private static getUIParamMap(extensionPath:string){
+        const bootstrapCss = vscode.Uri.file(path.join(extensionPath, 'media', 'bootstrap.css')).with({ scheme: 'vscode-resource' });
+        const styleCss = vscode.Uri.file(path.join(extensionPath, 'media', 'codeAssistant.css')).with({ scheme: 'vscode-resource' });
         const jqueryUri = vscode.Uri.file(path.join(extensionPath, 'media', 'jquery.js')).with({ scheme: 'vscode-resource' });
         const searchUri = vscode.Uri.file(path.join(extensionPath, 'media', 'search.js')).with({ scheme: 'vscode-resource' });
-        return `<!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Template Search</title>
-            <style>
-            </style>
-        </head>
-        <body>
-            <h2 class="code-template-title">Template Search</h2>
-            <div>Search Template: <input id="searchContent"></input><button id="SearchCommand">Search</button></div>
-            <div id="searchResult"></div>
-            <script src="${jqueryUri}"></script>
-            <script src="${searchUri}"></script>
-        </body>
-        </html>`
+
+        return {
+            bootstrapCss,
+            styleCss,
+            jqueryUri,
+            searchUri
+        }
     }
 
-    public static getNoTemplateContent(){
+    private static notFoundContent(){
         return `<!DOCTYPE html>
             <html lang="en">
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Template Search</title>
-                <style>
-                </style>
+                <title>Not Found</title>                
             </head>
             <body>
-                <h2 class="code-template-title">Template Search</h2>
-                <div>No Template Loaded!</div>
-                <script>
-                </script>
+                <h2 class="code-template-title">Page Not Found</h2>
             </body>
-            </html>`
+            </html>`        
+    }
+
+    public static getContent(extensionPath:string){        
+        const uiPath = path.resolve(extensionPath, 'media/ui/search.html')
+        if ( !fs.existsSync(uiPath) ){
+            console.log("ui page path invalid:"+uiPath)
+            return this.notFoundContent()
+        }
+        const params = this.getUIParamMap(extensionPath)
+        let bf = fs.readFileSync(uiPath)
+        return Mustache.render( bf.toString('utf8'), params )
+    }
+
+    public static getNoTemplateContent(extensionPath:string){
+        const uiPath = path.resolve(extensionPath, 'media/ui/noTemplate.html')
+        if ( !fs.existsSync(uiPath) ){
+            console.log("ui page path invalid:"+uiPath)
+            return this.notFoundContent()
+        }
+        const params = this.getUIParamMap(extensionPath)
+        let bf = fs.readFileSync(uiPath)
+        return Mustache.render( bf.toString('utf8'), params )        
     }
 }

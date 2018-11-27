@@ -45,3 +45,11 @@ export interface TemplateConfig {
     nameRule: CodeNameRule;
     infos: TemplateVariable;
 }
+
+export interface SearchCondition{
+    inputKeyword: string;
+    outputKeyword: string;
+    searchKeyword: string;
+    tagKeyword: string;
+    targetSupport: string;
+}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Search</title>
+    <link rel="stylesheet" href="{{bootstrapCss}}">
+    <link rel="stylesheet" href="{{styleCss}}">
+</head>
+
+<body>
+    <h2 class="code-template-title">Template Search</h2>
+    <hr></hr>
+    <form class="form-horizontal" id="searchConditionForm">
+        <div class="form-group">
+            <label for="inputKeyword" class="col-sm-2 control-label">Input Keyword</label>
+            <div class="col-sm-10">
+                <input id="inputKeyword" class="form-control" type="text"></input>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="outputKeyword" class="col-sm-2 control-label">Output Keyword</label>
+            <div class="col-sm-10">
+                <input id="outputKeyword" class="form-control" type="text"></input>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="searchKeyword" class="col-sm-2 control-label">Search Keyword</label>
+            <div class="col-sm-10">
+                <input id="searchKeyword" class="form-control" type="text"></input>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="tagKeyword" class="col-sm-2 control-label">Tags</label>
+            <div class="col-sm-10">
+                <input id="tagKeyword" class="form-control" type="text"></input>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="targetSupport" class="col-sm-2 control-label">Support</label>
+            <div class="col-sm-10">
+                <input id="targetSupport" class="form-control" type="text"></input>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button id="SearchCommand" type="submit" class="btn btn-default">Search</button>
+            </div>
+        </div>
+    </form>
+    <div class="table-responsive">
+        <table id="searchResult" class="table table-striped">
+            <tr>
+                <th>#</th>
+                <th>Template Name</th>
+                <th>Description</th>
+            </tr>
+        </table>
+    </div>
+    <script src="{{jqueryUri}}"></script>
+    <script src="{{searchUri}}"></script>
+</body>
+
+</html>
